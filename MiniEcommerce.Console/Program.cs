@@ -1,5 +1,5 @@
 using System.Globalization;
-using MiniEcommerce.Console.Core;
+using MiniEcommerce.Core;
 
 CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
 CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");

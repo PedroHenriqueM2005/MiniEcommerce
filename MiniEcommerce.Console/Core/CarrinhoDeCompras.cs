@@ -1,13 +1,25 @@
-namespace MiniEcommerce.Console.Core;
+namespace MiniEcommerce.Core;
 
+/// <summary>
+/// Carrinho de compras do cliente: acumula itens, calcula o total
+/// e valida os limites de estoque a cada adição.
+/// </summary>
 public class CarrinhoDeCompras
 {
     private readonly List<ItemCarrinho> _itens = [];
 
+    /// <summary>Itens atualmente presentes no carrinho.</summary>
     public IReadOnlyList<ItemCarrinho> Itens => _itens.AsReadOnly();
 
+    /// <summary>Soma dos subtotais de todos os itens do carrinho.</summary>
     public decimal Total => _itens.Sum(item => item.Subtotal);
 
+    /// <summary>
+    /// Adiciona um produto ao carrinho, acumulando quantidades do mesmo produto
+    /// e validando o limite de estoque disponível.
+    /// </summary>
+    /// <exception cref="ArgumentException">Lançada quando a quantidade não é positiva.</exception>
+    /// <exception cref="InvalidOperationException">Lançada quando a quantidade excede o estoque disponível.</exception>
     public void AdicionarItem(Produto produto, int quantidade)
     {
         ArgumentNullException.ThrowIfNull(produto);
@@ -31,6 +43,10 @@ public class CarrinhoDeCompras
         _itens.Add(new ItemCarrinho(produto, quantidadeTotal));
     }
 
+    /// <summary>
+    /// Remove do carrinho o item correspondente ao produto informado.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Lançada quando o produto não está no carrinho.</exception>
     public void RemoverItem(Guid produtoId)
     {
         var item = _itens.FirstOrDefault(i => i.Produto.Id == produtoId)

@@ -1,16 +1,26 @@
 using System.Globalization;
 using System.Text;
 
-namespace MiniEcommerce.Console.Core;
+namespace MiniEcommerce.Core;
 
+/// <summary>
+/// Pedido (compra) finalizado: consolida os itens do carrinho, realiza a baixa
+/// automática no estoque e calcula o valor total da compra.
+/// </summary>
 public class Pedido
 {
     private static readonly CultureInfo CulturaBrasileira = new("pt-BR");
 
+    /// <summary>Identificador único do pedido.</summary>
     public Guid Id { get; } = Guid.NewGuid();
+
+    /// <summary>Data e hora da finalização do pedido.</summary>
     public DateTime Data { get; } = DateTime.Now;
+
+    /// <summary>Itens consolidados do pedido.</summary>
     public IReadOnlyList<ItemPedido> Itens { get; }
 
+    /// <summary>Valor total do pedido (soma dos subtotais).</summary>
     public decimal ValorTotal => Itens.Sum(item => item.Subtotal);
 
     private Pedido(IReadOnlyList<ItemPedido> itens)
@@ -18,6 +28,12 @@ public class Pedido
         Itens = itens;
     }
 
+    /// <summary>
+    /// Fecha o pedido a partir do carrinho: valida o carrinho, decrementa o estoque
+    /// de cada produto adquirido e retorna o pedido consolidado.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">Lançada quando o carrinho é nulo.</exception>
+    /// <exception cref="InvalidOperationException">Lançada quando o carrinho está vazio.</exception>
     public static Pedido Finalizar(CarrinhoDeCompras carrinho)
     {
         ArgumentNullException.ThrowIfNull(carrinho);
@@ -37,6 +53,7 @@ public class Pedido
         return new Pedido(itens);
     }
 
+    /// <summary>Gera o resumo financeiro formatado do pedido, com itens e valor total.</summary>
     public string GerarResumo()
     {
         var resumo = new StringBuilder();

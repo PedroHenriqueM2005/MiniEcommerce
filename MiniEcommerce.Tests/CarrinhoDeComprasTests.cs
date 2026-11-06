@@ -1,4 +1,4 @@
-using MiniEcommerce.Console.Core;
+using MiniEcommerce.Core;
 using Xunit;
 
 namespace MiniEcommerce.Tests;
